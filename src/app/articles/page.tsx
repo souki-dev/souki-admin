@@ -7,23 +7,26 @@ import { db, getDbInstance } from '@/lib/firebase';
 import { Article } from '@/types';
 import {
   PlusIcon,
-  PencilIcon,
   TrashIcon,
+  PencilIcon,
   EyeIcon,
   EyeSlashIcon,
-  CalendarIcon,
   TagIcon,
+  CalendarIcon,
 } from '@heroicons/react/24/outline';
 import AuthGuard from '@/components/AuthGuard';
 import Navigation from '@/components/Navigation';
 import LoadingSpinner from '@/components/LoadingSpinner';
+import Modal from '@/components/Modal';
+import ArticleForm from '@/components/ArticleForm';
 import { formatDistanceToNow, format } from 'date-fns';
 
 export default function ArticlesPage() {
   const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState<'all' | 'published' | 'draft'>('all');
   const [searchTerm, setSearchTerm] = useState('');
+  const [filter, setFilter] = useState<'all' | 'published' | 'draft'>('all');
+  const [showCreateModal, setShowCreateModal] = useState(false);
 
   useEffect(() => {
     if (!db) {
@@ -93,13 +96,13 @@ export default function ArticlesPage() {
               <h1 className="text-3xl font-bold text-gray-900">Articles</h1>
               <p className="text-gray-600 mt-1">Manage your content articles</p>
             </div>
-            <Link
-              href="/articles/new"
+            <button
+              onClick={() => setShowCreateModal(true)}
               className="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
             >
               <PlusIcon className="h-5 w-5 mr-2" />
               New Article
-            </Link>
+            </button>
           </div>
 
           {/* Filters and Search */}
@@ -162,13 +165,13 @@ export default function ArticlesPage() {
                   : 'Get started by creating your first article.'}
               </p>
               {!searchTerm && filter === 'all' && (
-                <Link
-                  href="/articles/new"
+                <button
+                  onClick={() => setShowCreateModal(true)}
                   className="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
                 >
                   <PlusIcon className="h-5 w-5 mr-2" />
                   Create Article
-                </Link>
+                </button>
               )}
             </div>
           ) : (
@@ -275,6 +278,19 @@ export default function ArticlesPage() {
             </div>
           )}
         </div>
+
+        {/* Create Article Modal */}
+        <Modal
+          isOpen={showCreateModal}
+          onClose={() => setShowCreateModal(false)}
+          title="Create New Article"
+          size="xl"
+        >
+          <ArticleForm
+            onSuccess={() => setShowCreateModal(false)}
+            onCancel={() => setShowCreateModal(false)}
+          />
+        </Modal>
       </Navigation>
     </AuthGuard>
   );
