@@ -31,7 +31,14 @@ NEXT_PUBLIC_ADMIN_EMAILS=souki.app@gmail.com
 1. Visit [vercel.com](https://vercel.com) and sign in with GitHub
 2. Click "New Project" and import your repository
 3. Vercel will auto-detect it's a Next.js project
-4. Add the environment variables in the "Environment Variables" section
+4. In the "Environment Variables" section, add each variable individually:
+   - `NEXT_PUBLIC_FIREBASE_API_KEY` = `AIzaSyAZSq22ji3_hoZzLoMWkfVN8IjJpGbHKGw`
+   - `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN` = `souki-app.firebaseapp.com`
+   - `NEXT_PUBLIC_FIREBASE_PROJECT_ID` = `souki-app`
+   - `NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET` = `souki-app.firebasestorage.app`
+   - `NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID` = `277212644563`
+   - `NEXT_PUBLIC_FIREBASE_APP_ID` = `1:277212644563:web:48ff795c3aac3fefb74026`
+   - `NEXT_PUBLIC_ADMIN_EMAILS` = `souki.app@gmail.com`
 5. Click "Deploy"
 
 **Advantages:**
@@ -40,6 +47,8 @@ NEXT_PUBLIC_ADMIN_EMAILS=souki.app@gmail.com
 - Global CDN
 - Serverless functions
 - Automatic deployments on git push
+
+**Note:** Don't use secrets (@variable-name) for public environment variables that start with `NEXT_PUBLIC_`
 
 ### Option 2: Netlify
 **Best for:** Static sites, easy deployment, generous free tier
