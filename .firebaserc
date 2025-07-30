@@ -1,0 +1,8 @@
+{
+  "projects": {
+    "default": "souki-app"
+  },
+  "targets": {},
+  "etags": {},
+  "dataconnectEmulatorConfig": {}
+}

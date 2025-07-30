@@ -35,33 +35,36 @@ export default function DashboardPage() {
         return;
       }
       
-      // Fetch articles stats
+      // Fetch articles stats - using simple queries to avoid index requirements
       const articlesRef = collection(db, 'articles');
       const allArticlesQuery = query(articlesRef, orderBy('createdAt', 'desc'));
-      const publishedArticlesQuery = query(articlesRef, where('status', '==', 'published'), orderBy('createdAt', 'desc'));
-      const draftArticlesQuery = query(articlesRef, where('status', '==', 'draft'), orderBy('createdAt', 'desc'));
       const recentArticlesQuery = query(articlesRef, orderBy('createdAt', 'desc'), limit(5));
 
-      const [allArticlesSnap, publishedArticlesSnap, draftArticlesSnap, recentArticlesSnap] = await Promise.all([
+      // Fetch all articles to filter locally (temporary workaround for index building)
+      const [allArticlesSnap, recentArticlesSnap] = await Promise.all([
         getDocs(allArticlesQuery),
-        getDocs(publishedArticlesQuery),
-        getDocs(draftArticlesQuery),
         getDocs(recentArticlesQuery),
       ]);
 
-      // Fetch media stats
+      // Filter articles locally to avoid composite index requirement
+      const allArticles = allArticlesSnap.docs.map(doc => ({ id: doc.id, ...doc.data() })) as (Article & { id: string })[];
+      const publishedArticles = allArticles.filter(article => article.status === 'published');
+      const draftArticles = allArticles.filter(article => article.status === 'draft');
+
+      // Fetch media stats - using simple queries
       const mediaRef = collection(db, 'media');
       const allMediaQuery = query(mediaRef, orderBy('createdAt', 'desc'));
-      const photosQuery = query(mediaRef, where('type', '==', 'photo'), orderBy('createdAt', 'desc'));
-      const videosQuery = query(mediaRef, where('type', '==', 'video'), orderBy('createdAt', 'desc'));
       const recentMediaQuery = query(mediaRef, orderBy('createdAt', 'desc'), limit(5));
 
-      const [allMediaSnap, photosSnap, videosSnap, recentMediaSnap] = await Promise.all([
+      const [allMediaSnap, recentMediaSnap] = await Promise.all([
         getDocs(allMediaQuery),
-        getDocs(photosQuery),
-        getDocs(videosQuery),
         getDocs(recentMediaQuery),
       ]);
+
+      // Filter media locally to avoid composite index requirement
+      const allMedia = allMediaSnap.docs.map(doc => ({ id: doc.id, ...doc.data() })) as (Media & { id: string })[];
+      const photos = allMedia.filter(media => media.type === 'photo');
+      const videos = allMedia.filter(media => media.type === 'video');
 
       const recentArticles: Article[] = recentArticlesSnap.docs.map(doc => ({
         id: doc.id,
@@ -79,11 +82,11 @@ export default function DashboardPage() {
 
       setStats({
         totalArticles: allArticlesSnap.size,
-        publishedArticles: publishedArticlesSnap.size,
-        draftArticles: draftArticlesSnap.size,
+        publishedArticles: publishedArticles.length,
+        draftArticles: draftArticles.length,
         totalMedia: allMediaSnap.size,
-        totalPhotos: photosSnap.size,
-        totalVideos: videosSnap.size,
+        totalPhotos: photos.length,
+        totalVideos: videos.length,
         recentArticles,
         recentMedia,
       });

@@ -1,0 +1,31 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Helper function to check if user is admin
+    function isAdmin() {
+      return request.auth != null && 
+             request.auth.token.email in ['souki.app@gmail.com'];
+    }
+    
+    // Photos folder - admin only
+    match /photos/{allPaths=**} {
+      allow read, write: if isAdmin();
+    }
+    
+    // Videos folder - admin only
+    match /videos/{allPaths=**} {
+      allow read, write: if isAdmin();
+    }
+    
+    // Articles folder (for cover images) - admin only
+    match /articles/{allPaths=**} {
+      allow read, write: if isAdmin();
+    }
+    
+    // Default deny all other paths
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

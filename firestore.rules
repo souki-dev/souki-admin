@@ -1,0 +1,41 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper function to check if user is admin
+    function isAdmin() {
+      return request.auth != null && 
+             request.auth.token.email in ['souki.app@gmail.com'];
+    }
+    
+    // Articles collection - admin only
+    match /articles/{document} {
+      allow read, write: if isAdmin();
+    }
+    
+    // Media collection - admin only  
+    match /media/{document} {
+      allow read, write: if isAdmin();
+    }
+    
+    // Categories collection - admin only
+    match /categories/{document} {
+      allow read, write: if isAdmin();
+    }
+    
+    // Tags collection - admin only
+    match /tags/{document} {
+      allow read, write: if isAdmin();
+    }
+    
+    // Admin users collection - admin only
+    match /admin_users/{document} {
+      allow read, write: if isAdmin();
+    }
+    
+    // Default deny all other collections
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
