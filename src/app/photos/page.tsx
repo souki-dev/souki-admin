@@ -162,8 +162,8 @@ export default function PhotosPage() {
             </div>
             <div {...getRootProps()}>
               <input {...getInputProps()} />
-              <button className="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
-                <PlusIcon className="h-5 w-5 mr-2" />
+              <button className="inline-flex items-center px-6 py-3 bg-indigo-600 text-white text-lg font-semibold rounded-lg hover:bg-indigo-700 transition-colors shadow-lg border-2 border-indigo-700" style={{ minWidth: '160px', minHeight: '48px' }}>
+                <PlusIcon className="h-6 w-6 mr-2" />
                 Upload Photos
               </button>
             </div>
